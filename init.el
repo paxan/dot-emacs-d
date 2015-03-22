@@ -48,4 +48,8 @@
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
 
+;;;; magit
+(global-set-key (kbd "C-x g") 'magit-status)
+
+
 ;;; init.el ends here
