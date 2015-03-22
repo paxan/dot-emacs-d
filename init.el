@@ -24,7 +24,8 @@
   (mapc #'(lambda (package)
             (unless (package-installed-p package)
               (package-install package)))
-        '(ido-ubiquitous
+        '(cider
+	  ido-ubiquitous
 	  magit
 	  paredit
 	  projectile)))
