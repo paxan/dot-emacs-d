@@ -42,6 +42,10 @@
 ;; replace buffer-menu with ibuffer
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
+;; enable fullscreen toggling via Alt-Enter
+(when (and (eq system-type 'darwin) window-system)
+  (global-set-key (kbd "M-RET") 'toggle-frame-fullscreen))
+
 
 ;;;; emacs lisp
 (defun imenu-elisp-sections ()
