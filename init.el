@@ -39,6 +39,9 @@
 
 ;;;; global key bindings
 
+;; replace buffer-menu with ibuffer
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 
 ;;;; emacs lisp
 (defun imenu-elisp-sections ()
