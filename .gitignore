@@ -1,3 +1,4 @@
-*.el~
+*~
+/ido.last*
 /auto-save-list/
 /elpa/
