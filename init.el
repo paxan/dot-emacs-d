@@ -162,6 +162,37 @@
             (add-hook 'after-init-hook 'global-company-mode)))
 
 
+;;;; smex (making M-x not suck!)
+(use-package smex
+  :ensure t
+  :bind   (("M-x"         . smex)
+           ("M-X"         . smex-major-mode-commands)
+           ("C-c C-c M-x" . execute-extended-command))
+  :config (setq smex-save-file (f-join savefile-dir "smex-items")))
+
+
+;;;; ido
+(use-package ido
+  :config (setq ido-case-fold t
+                ido-enable-prefix nil
+                ido-create-new-buffer 'always
+                ido-use-filename-at-point 'guess
+                ido-max-prospects 10
+                ido-save-directory-list-file (f-join savefile-dir "ido.last")
+                ido-default-file-method 'selected-window
+                ido-auto-merge-work-directories-length -1
+                ido-ignore-buffers '("\\` ")))
+
+
+;;;; smarter fuzzy matching for ido
+(use-package flx-ido
+  :ensure t
+  :init   (flx-ido-mode +1)
+  :config (progn
+            ;; disable ido faces to see flx highlights
+            (setq ido-use-faces nil)))
+
+
 ;;;; ido-ubiquitous
 (use-package ido-ubiquitous
   :ensure t
