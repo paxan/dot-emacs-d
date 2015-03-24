@@ -223,12 +223,17 @@
       (grep command-args))))
 
 
+;;;; default theme
+(use-package solarized-theme
+  :if     window-system
+  :init   (load-theme 'solarized-dark t))
+
+
 ;;;; miscellaneous customizations
 
 ;; Theme and font settings
-(load-theme 'manoj-dark)
 (when window-system
-  (set-frame-font "Monaco-15" t))
+  (set-frame-font "Monaco-16" t))
 
 ;; This tells various "git" commands not to pipe their output through
 ;; "less" or similar.
