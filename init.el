@@ -108,6 +108,13 @@
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
 
+;;;; get $PATH from the shell
+(use-package exec-path-from-shell
+  :ensure t
+  :if     (eq system-type 'darwin)
+  :init   (exec-path-from-shell-initialize))
+
+
 ;;;; magit
 (use-package magit
   :ensure t
