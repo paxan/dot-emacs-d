@@ -108,6 +108,10 @@
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
 
+;;;; Modern API for working with files and directories
+(use-package f :ensure t)
+
+
 ;;;; get $PATH from the shell
 (use-package exec-path-from-shell
   :ensure t
@@ -166,6 +170,25 @@
           (ido-mode +1)
           (ido-ubiquitous-mode +1)))
 
+
+;;;; cider
+(use-package cider
+  :ensure t
+  :bind   (("S-<return>" . cider-repl-newline-and-indent)
+           ("C-c M-r"    . cider-refresh))
+  :config (progn
+            (unbind-key "C-j" cider-repl-mode-map)
+
+            (setq cider-repl-history-file (f-join savefile-dir "cider-repl-history"))
+            (setq cider-repl-use-clojure-font-lock t)
+            (setq cider-repl-use-pretty-printing t)
+            (setq cider-repl-popup-stacktraces t)
+            (setq cider-auto-select-error-buffer nil)
+            (setq nrepl-hide-special-buffers nil)
+            (setq cider-repl-print-length 100)
+
+            (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+            (add-hook 'cider-repl-mode-hook 'subword-mode)))
 
 ;;;; miscellaneous customizations
 
