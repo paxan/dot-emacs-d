@@ -145,8 +145,7 @@
 
 
 ;;;; clojure-mode
-(use-package clojure-mode
-  :ensure t)
+(use-package clojure-mode :ensure t)
 
 
 ;;;; mic-paren
@@ -166,9 +165,9 @@
 ;;;; ido-ubiquitous
 (use-package ido-ubiquitous
   :ensure t
-  :init (progn
-          (ido-mode +1)
-          (ido-ubiquitous-mode +1)))
+  :init   (progn
+            (ido-mode +1)
+            (ido-ubiquitous-mode +1)))
 
 
 ;;;; cider
