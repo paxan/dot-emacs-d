@@ -189,6 +189,40 @@
             (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
             (add-hook 'cider-repl-mode-hook 'subword-mode)))
 
+
+;;;; git-grep
+(when (require 'vc-git nil t)
+  (defcustom git-grep-switches "--extended-regexp -I -n --no-color"
+    "Switches to pass to `git grep'."
+    :type 'string)
+
+  (defun git-grep-get-shell-command (case-sensitive)
+    (let ((root (vc-git-root default-directory)))
+      (when (not root)
+        (error "Directory %s is not part of a Git working tree" default-directory))
+      (list (read-shell-command "Run git-grep (like this): "
+                                (format "cd %s && git grep %s%s -e %s"
+                                        root
+                                        git-grep-switches
+                                        (if case-sensitive "" " --ignore-case")
+                                        (let ((thing (thing-at-point 'symbol)))
+                                          (or (and thing (progn
+                                                           (set-text-properties 0 (length thing) nil thing)
+                                                           (shell-quote-argument thing)))
+                                              "")))
+                                'git-grep-history))))
+
+  (defun git-grep (command-args)
+    (interactive (git-grep-get-shell-command t))
+    (let ((grep-use-null-device nil))
+      (grep command-args)))
+
+  (defun git-grep-i (command-args)
+    (interactive (git-grep-get-shell-command nil))
+    (let ((grep-use-null-device nil))
+      (grep command-args))))
+
+
 ;;;; miscellaneous customizations
 
 ;; Theme and font settings
