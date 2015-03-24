@@ -7,9 +7,17 @@
 ;; No splash screen
 (setq inhibit-startup-screen t)
 
+
+;;;; Locations
+(defvar dot-emacs-dir (file-name-directory load-file-name)
+  "The root dir of the Emacs configuration")
+(defvar savefile-dir (expand-file-name "savefile" dot-emacs-dir)
+  "This folder stores all the automatically generated save/history-files.")
+
+
 ;;;; package.el
 (require 'package)
-(setq package-user-dir "~/.emacs.d/elpa/")
+(setq package-user-dir (expand-file-name "elpa/" dot-emacs-dir))
 (add-to-list 'package-archives '("melpa"        . "http://melpa.org/packages/")                t)
 (add-to-list 'package-archives '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
 (package-initialize)
