@@ -268,7 +268,7 @@
 
 ;; This tells various "git" commands not to pipe their output through
 ;; "less" or similar.
-(setenv "PAGER" "cat")
+(setenv "GIT_PAGER" "cat")
 
 ;; At work I sometimes use a frame that's 166 characters wide.  When I
 ;; do that, I find that many windows split horizontally -- for
