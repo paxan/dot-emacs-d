@@ -231,6 +231,14 @@
   :diminish projectile-mode)
 
 
+;;;; flycheck
+(use-package flycheck
+  :ensure t
+  :config (progn
+            (setq flycheck-mode-line-lighter " fl")
+            (add-hook 'after-init-hook 'global-flycheck-mode)))
+
+
 ;;;; git-grep
 (when (require 'vc-git nil t)
   (defcustom git-grep-switches "--extended-regexp -I -n --no-color"
