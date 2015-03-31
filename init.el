@@ -144,6 +144,25 @@
   :config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable))
 
 
+;;;; go-mode
+(defun manage-gopath! ()
+  "Set GOPATH to projectile project root directory."
+  (message "GOPATH set to the project dir: %s"
+           (setenv "GOPATH"
+                   (expand-file-name
+                    (directory-file-name (projectile-project-root))))))
+
+(defun four-space-tabs-please! ()
+  "Yes, 4 spaces in tabs!"
+  (setq tab-width 4))
+
+(use-package go-mode
+  :ensure t
+  :init   (progn
+            (add-hook 'projectile-switch-project-hook 'manage-gopath!)
+            (add-hook 'go-mode-hook                   'four-space-tabs-please!)))
+
+
 ;;;; clojure-mode
 (use-package clojure-mode :ensure t)
 
