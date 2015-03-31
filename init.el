@@ -1,5 +1,9 @@
 ;;; init.el --- My emacs configuration file
 
+;;; Commentary:
+
+;;; Code:
+
 ;; Turn off mouse interface early in startup to avoid momentary display
 (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -10,7 +14,7 @@
 
 ;;;; Locations
 (defvar dot-emacs-dir (file-name-directory load-file-name)
-  "The root dir of the Emacs configuration")
+  "The root dir of the Emacs configuration.")
 (defvar savefile-dir (expand-file-name "savefile" dot-emacs-dir)
   "This folder stores all the automatically generated save/history-files.")
 
