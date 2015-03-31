@@ -221,6 +221,16 @@
             (add-hook 'cider-repl-mode-hook 'subword-mode)))
 
 
+;;;; projectile
+(use-package projectile
+  :ensure t
+  :init   (progn
+            (setq projectile-known-projects-file (f-join savefile-dir "projectile-bookmarks.eld")
+                  projectile-cache-file          (f-join savefile-dir "projectile.cache"))
+            (projectile-global-mode t))
+  :diminish projectile-mode)
+
+
 ;;;; git-grep
 (when (require 'vc-git nil t)
   (defcustom git-grep-switches "--extended-regexp -I -n --no-color"
