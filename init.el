@@ -297,6 +297,7 @@
 
 ;;;; default theme
 (use-package solarized-theme
+  :ensure t
   :if     window-system
   :init   (load-theme 'solarized-dark t))
 
