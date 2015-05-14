@@ -151,10 +151,10 @@
 ;;;; go-mode
 (defun manage-gopath! ()
   "Set GOPATH to projectile project root directory."
-  (message "GOPATH set to the project dir: %s"
+  (message "GOPATH set to: %s"
            (setenv "GOPATH"
-                   (expand-file-name
-                    (directory-file-name (projectile-project-root))))))
+                   (let ((go-ws (expand-file-name (directory-file-name (projectile-project-root)))))
+                     (concat go-ws ":" (expand-file-name "vendor" go-ws))))))
 
 (defun four-space-tabs-please! ()
   "Yes, 4 spaces in tabs!"
