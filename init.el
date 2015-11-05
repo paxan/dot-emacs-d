@@ -301,17 +301,16 @@
       (grep command-args))))
 
 
-;;;; default theme
-(use-package solarized-theme
-  :ensure t
-  :if     window-system
-  :init   (load-theme 'solarized-dark t))
+;;;; ensure we have solarized-theme
+(use-package solarized-theme :ensure t :if window-system)
 
 
 ;;;; miscellaneous customizations
 
 ;; Theme and font settings
 (when window-system
+  ;;(load-theme 'whiteboard t)
+  (load-theme 'solarized-dark t)
   (set-frame-font "Monaco-13" t))
 
 ;; This tells various "git" commands not to pipe their output through
