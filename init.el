@@ -312,7 +312,7 @@
 
 ;; Theme and font settings
 (when window-system
-  (set-frame-font "Monaco-16" t))
+  (set-frame-font "Monaco-13" t))
 
 ;; This tells various "git" commands not to pipe their output through
 ;; "less" or similar.
