@@ -168,7 +168,13 @@
 
 
 ;;;; clojure-mode
-(use-package clojure-mode :ensure t)
+(use-package clojure-mode
+  :ensure t
+  :config (progn
+            (define-clojure-indent
+              (go-try 'defun)
+              (go-try-loop 'defun)
+              (try-let 'defun))))
 
 
 ;;;; mic-paren
