@@ -163,8 +163,8 @@
 (use-package go-mode
   :ensure t
   :init   (progn
-            (add-hook 'projectile-switch-project-hook 'manage-gopath!)
-            (add-hook 'go-mode-hook                   'four-space-tabs-please!)))
+            (add-hook 'projectile-after-switch-project-hook 'manage-gopath!)
+            (add-hook 'go-mode-hook 'four-space-tabs-please!)))
 
 
 ;;;; clojure-mode
