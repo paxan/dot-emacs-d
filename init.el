@@ -309,6 +309,10 @@
 
 ;; Theme and font settings
 (when window-system
+  (defun text-scale-default () (interactive) (text-scale-set 0))
+  (bind-key "s-=" 'text-scale-increase)
+  (bind-key "s--" 'text-scale-decrease)
+  (bind-key "s-0" 'text-scale-default)
   ;;(load-theme 'whiteboard t)
   (load-theme 'solarized-dark t)
   (set-frame-font "Monaco-13" t))
