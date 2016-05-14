@@ -148,6 +148,14 @@
   :config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable))
 
 
+;;;; company
+(use-package company
+  :ensure t
+  :config (progn
+            ;; Use company-mode in all buffers
+            (add-hook 'after-init-hook 'global-company-mode)))
+
+
 ;;;; go-mode
 (defun manage-gopath! ()
   "Set GOPATH to projectile project root directory."
@@ -164,7 +172,10 @@
   :ensure t
   :init   (progn
             (add-hook 'projectile-after-switch-project-hook 'manage-gopath!)
-            (add-hook 'go-mode-hook 'four-space-tabs-please!)))
+            (add-hook 'go-mode-hook (lambda ()
+                                      (four-space-tabs-please!)
+                                      (set (make-local-variable 'company-backends) '(company-go))
+                                      (company-mode)))))
 
 
 ;;;; clojure-mode
@@ -181,14 +192,6 @@
 (use-package mic-paren
   :ensure t
   :config (add-hook 'prog-mode-hook 'paren-activate))
-
-
-;;;; company
-(use-package company
-  :ensure t
-  :config (progn
-            ;; Use company-mode in all buffers
-            (add-hook 'after-init-hook 'global-company-mode)))
 
 
 ;;;; smex (making M-x not suck!)
