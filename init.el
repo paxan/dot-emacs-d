@@ -257,8 +257,20 @@
 (use-package projectile
   :ensure t
   :init   (progn
-            (setq projectile-known-projects-file (f-join savefile-dir "projectile-bookmarks.eld")
-                  projectile-cache-file          (f-join savefile-dir "projectile.cache"))
+            (setq projectile-known-projects-file
+                  (f-join savefile-dir "projectile-bookmarks.eld")
+
+                  projectile-cache-file
+                  (f-join savefile-dir "projectile.cache")
+
+                  projectile-project-root-files
+                  nil
+
+                  projectile-project-root-files-bottom-up
+                  '(".projectile")
+
+                  projectile-project-root-files-top-down-recurring
+                  nil)
             (projectile-global-mode t))
   :diminish projectile-mode)
 
