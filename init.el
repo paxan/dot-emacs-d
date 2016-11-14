@@ -165,13 +165,6 @@
 
 
 ;;;; go-mode
-(defun manage-gopath! ()
-  "Set GOPATH to projectile project root directory."
-  (message "GOPATH set to: %s"
-           (setenv "GOPATH"
-                   (let ((go-ws (expand-file-name (directory-file-name (projectile-project-root)))))
-                     (concat go-ws ":" (expand-file-name "vendor" go-ws))))))
-
 (defun four-space-tabs-please! ()
   "Yes, 4 spaces in tabs!"
   (setq tab-width 4))
@@ -179,7 +172,6 @@
 (use-package go-mode
   :ensure t
   :init   (progn
-            (add-hook 'projectile-after-switch-project-hook 'manage-gopath!)
             (add-hook 'go-mode-hook (lambda ()
                                       (four-space-tabs-please!)
                                       (set (make-local-variable 'company-backends) '(company-go))
@@ -259,28 +251,6 @@
 
             (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
             (add-hook 'cider-repl-mode-hook 'subword-mode)))
-
-
-;;;; projectile
-(use-package projectile
-  :ensure t
-  :init   (progn
-            (setq projectile-known-projects-file
-                  (f-join savefile-dir "projectile-bookmarks.eld")
-
-                  projectile-cache-file
-                  (f-join savefile-dir "projectile.cache")
-
-                  projectile-project-root-files
-                  nil
-
-                  projectile-project-root-files-bottom-up
-                  '(".projectile")
-
-                  projectile-project-root-files-top-down-recurring
-                  nil)
-            (projectile-global-mode t))
-  :diminish projectile-mode)
 
 
 ;;;; flycheck
