@@ -148,6 +148,14 @@
   :config (add-hook 'prog-mode-hook 'rainbow-delimiters-mode-enable))
 
 
+;;;; markdown-mode
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("\\.md\\'" . gfm-mode))
+  :init (setq markdown-command "multimarkdown"))
+
+
 ;;;; company
 (use-package company
   :ensure t
