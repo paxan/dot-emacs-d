@@ -11,6 +11,8 @@
 ;; No splash screen
 (setq inhibit-startup-screen t)
 
+;; No menu
+(menu-bar-mode -1)
 
 ;;;; Locations
 (defvar dot-emacs-dir (file-name-directory load-file-name)
