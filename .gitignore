@@ -1,4 +1,6 @@
 /auto-save-list/
-/elpa/
-/savefile/
 /custom.el
+/elpa/
+/ido.last
+/savefile/
+/smex-items
