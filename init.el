@@ -226,12 +226,13 @@
             (setq ido-use-faces nil)))
 
 
-;;;; ido-ubiquitous
-(use-package ido-ubiquitous
+;;;; ido-completing-read+ (formerly ido-ubiquitous)
+(use-package ido-completing-read+
   :ensure t
   :init   (progn
-            (ido-mode +1)
-            (ido-ubiquitous-mode +1)))
+            (ido-mode 1)
+            (ido-everywhere 1)
+            (ido-ubiquitous-mode 1)))
 
 
 ;;;; cider
