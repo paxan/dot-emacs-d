@@ -308,9 +308,8 @@
   (bind-key "s-=" 'text-scale-increase)
   (bind-key "s--" 'text-scale-decrease)
   (bind-key "s-0" 'text-scale-default)
-  ;;(load-theme 'whiteboard t)
   (load-theme 'solarized-dark t)
-  (set-frame-font "Monaco-13" t))
+
   (set-default-font "Fira Code-16"))
 
 (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
