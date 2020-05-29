@@ -310,7 +310,7 @@
   (bind-key "s-0" 'text-scale-default)
   (load-theme 'solarized-dark t)
 
-  (set-default-font "Fira Code-16"))
+  (set-frame-font "Fira Code-16"))
 
 (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
                (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
