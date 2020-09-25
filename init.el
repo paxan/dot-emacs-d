@@ -308,7 +308,7 @@
   (bind-key "s-=" 'text-scale-increase)
   (bind-key "s--" 'text-scale-decrease)
   (bind-key "s-0" 'text-scale-default)
-  (load-theme 'solarized-dark t)
+  (load-theme 'tango-dark t)
 
   (set-frame-font "Fira Code-16"))
 
