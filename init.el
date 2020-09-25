@@ -310,7 +310,8 @@
   (bind-key "s-0" 'text-scale-default)
   (load-theme 'tango-dark t)
 
-  (set-frame-font "Fira Code-16"))
+  (add-to-list 'default-frame-alist
+               '(font . "Fira Code-16")))
 
 (let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
                (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
