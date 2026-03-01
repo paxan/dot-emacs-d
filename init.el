@@ -139,8 +139,7 @@
               (if (eq this-command 'eval-expression)
                   (paredit-mode 1)))
             (add-hook 'minibuffer-setup-hook 'conditionally-enable-paredit-mode)
-            (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-            (add-hook 'clojure-mode-hook 'paredit-mode)))
+            (add-hook 'emacs-lisp-mode-hook 'paredit-mode)))
 
 
 ;;;; rainbow-delimiters
@@ -177,16 +176,6 @@
                                       (four-space-tabs-please!)
                                       (set (make-local-variable 'company-backends) '(company-go))
                                       (company-mode)))))
-
-
-;;;; clojure-mode
-(use-package clojure-mode
-  :ensure t
-  :config (progn
-            (define-clojure-indent
-              (go-try 'defun)
-              (go-try-loop 'defun)
-              (try-let 'defun))))
 
 
 ;;;; mic-paren
@@ -233,26 +222,6 @@
             (ido-mode 1)
             (ido-everywhere 1)
             (ido-ubiquitous-mode 1)))
-
-
-;;;; cider
-(use-package cider
-  :ensure t
-  :bind   (("S-<return>" . cider-repl-newline-and-indent)
-           ("C-c M-r"    . cider-refresh))
-  :config (progn
-            (unbind-key "C-j" cider-repl-mode-map)
-
-            (setq cider-repl-history-file (f-join savefile-dir "cider-repl-history"))
-            (setq cider-repl-use-clojure-font-lock t)
-            (setq cider-repl-use-pretty-printing t)
-            (setq cider-repl-popup-stacktraces t)
-            (setq cider-auto-select-error-buffer nil)
-            (setq nrepl-hide-special-buffers nil)
-            (setq cider-repl-print-length 100)
-
-            (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
-            (add-hook 'cider-repl-mode-hook 'subword-mode)))
 
 
 ;;;; flycheck
