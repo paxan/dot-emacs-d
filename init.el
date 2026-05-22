@@ -1,4 +1,4 @@
-;;; init.el --- My emacs configuration file
+;;; init.el --- My emacs configuration file  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 
@@ -201,6 +201,25 @@
   (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
 
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
+
+;; Auto-insert a lexical-binding cookie when creating a brand-new .el
+;; file. Without it Emacs falls back to dynamic scoping and warns on
+;; load. Guarded so it fires only for new files we're about to write,
+;; never for existing files we're just visiting.
+(defun pr/elisp-insert-lexical-binding-cookie ()
+  "Insert a `lexical-binding' cookie when visiting a new Elisp file."
+  (when (and buffer-file-name
+             (string-suffix-p ".el" buffer-file-name)
+             (not (file-exists-p buffer-file-name))
+             (zerop (buffer-size)))
+    (insert ";;; -*- lexical-binding: t; -*-\n\n")))
+
+(add-hook 'emacs-lisp-mode-hook #'pr/elisp-insert-lexical-binding-cookie)
+
+;; Prepend the lexical-binding cookie to `initial-scratch-message'.
+(when (stringp initial-scratch-message)
+  (setq initial-scratch-message
+        (concat ";;; -*- lexical-binding: t -*-\n\n" initial-scratch-message)))
 
 
 ;;;; get $PATH from the shell
