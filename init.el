@@ -14,6 +14,20 @@
 ;; No menu
 (menu-bar-mode -1)
 
+;; Third-party packages (go-mode, posframe, paredit, ...) reference
+;; functions from optional integrations we don't install (lsp-mode,
+;; eglot) and use elisp idioms the modern compiler grumbles about
+;; (defadvice, `case', etc.).  We can't fix any of it.  Quiet the
+;; compilers and suppress the popup buffers; messages still accumulate
+;; in *Native-compile-Log* / *Compile-Log* if we ever want to look.
+(setq native-comp-async-report-warnings-errors 'silent)
+(with-eval-after-load 'warnings
+  (add-to-list 'warning-suppress-types '(native-compiler)))
+(add-to-list 'display-buffer-alist
+             '("\\*Compile-Log\\*"
+               display-buffer-no-window
+               (allow-no-window . t)))
+
 ;;;; Locations
 (defvar dot-emacs-dir (file-name-directory load-file-name)
   "The root dir of the Emacs configuration.")
@@ -364,6 +378,6 @@
 
 
 (setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
+(load custom-file 'noerror)
 
 ;;; init.el ends here
