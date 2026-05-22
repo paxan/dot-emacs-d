@@ -147,6 +147,44 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 
+;;;; session persistence: desktop + save-place + savehist
+;;
+;; `desktop' records which files are open, plus point/window/mode
+;; metadata, and reopens them on next launch.  `save-place' remembers
+;; point per file.  `savehist' persists minibuffer history.  None of
+;; these store unsaved buffer contents -- normal save-on-exit prompts
+;; still apply, and `auto-save-mode' handles crash recovery.
+(use-package desktop
+  :init
+  (setq desktop-path             (list savefile-dir)
+        desktop-dirname          savefile-dir
+        desktop-save             t       ; save silently on exit
+        desktop-load-locked-desktop t    ; allow GUI + terminal Emacs to coexist
+        desktop-restore-eager    5       ; restore a few; lazy-load the rest
+        desktop-restore-frames   nil     ; skip frame layout (mixed GUI/tty)
+        desktop-files-not-to-save
+        (rx (or
+             ;; TRAMP/remote files and ange-ftp (Emacs defaults)
+             (seq bos "/" (1+ (not (any "/:"))) ":")
+             (seq "(ftp)" eos)
+             ;; large/log/archive files
+             (seq "." (or "log" "gz" "bz2" "xz" "zip") eos))))
+  :config
+  (add-to-list 'desktop-modes-not-to-save 'dired-mode)
+  (desktop-save-mode 1))
+
+(use-package saveplace
+  :init   (setq save-place-file (file-name-concat savefile-dir "saveplace"))
+  :config (save-place-mode 1))
+
+(use-package savehist
+  :init   (setq savehist-file (file-name-concat savefile-dir "savehist")
+                history-length 1000
+                savehist-save-minibuffer-history t
+                savehist-additional-variables '(search-ring regexp-search-ring))
+  :config (savehist-mode 1))
+
+
 ;;;; global key bindings
 
 ;; replace buffer-menu with ibuffer
@@ -163,10 +201,6 @@
   (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
 
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
-
-
-;;;; Modern API for working with files and directories
-(use-package f :ensure t)
 
 
 ;;;; get $PATH from the shell
@@ -253,7 +287,7 @@
   :bind   (("M-x"         . smex)
            ("M-X"         . smex-major-mode-commands)
            ("C-c C-c M-x" . execute-extended-command))
-  :config (setq smex-save-file (f-join savefile-dir "smex-items")))
+  :config (setq smex-save-file (file-name-concat savefile-dir "smex-items")))
 
 
 ;;;; ido
@@ -263,7 +297,7 @@
                 ido-create-new-buffer 'always
                 ido-use-filename-at-point 'guess
                 ido-max-prospects 10
-                ido-save-directory-list-file (f-join savefile-dir "ido.last")
+                ido-save-directory-list-file (file-name-concat savefile-dir "ido.last")
                 ido-default-file-method 'selected-window
                 ido-auto-merge-work-directories-length -1
                 ido-ignore-buffers '("\\` ")))
