@@ -5,11 +5,11 @@
 ;;; Code:
 
 ;; Turn off mouse interface early in startup to avoid momentary display
-(when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
 
 ;; No splash screen
-(setq inhibit-startup-screen t)
+(setopt inhibit-startup-screen t)
 
 ;; No menu
 (menu-bar-mode -1)
@@ -20,7 +20,7 @@
 ;; (defadvice, `case', etc.).  We can't fix any of it.  Quiet the
 ;; compilers and suppress the popup buffers; messages still accumulate
 ;; in *Native-compile-Log* / *Compile-Log* if we ever want to look.
-(setq native-comp-async-report-warnings-errors 'silent)
+(setopt native-comp-async-report-warnings-errors 'silent)
 (with-eval-after-load 'warnings
   (add-to-list 'warning-suppress-types '(native-compiler)))
 (add-to-list 'display-buffer-alist
@@ -29,15 +29,13 @@
                (allow-no-window . t)))
 
 ;;;; Locations
-(defvar dot-emacs-dir (file-name-directory load-file-name)
-  "The root dir of the Emacs configuration.")
-(defvar savefile-dir (expand-file-name "savefile" dot-emacs-dir)
+(defvar savefile-dir (expand-file-name "savefile" user-emacs-directory)
   "This folder stores all the automatically generated save/history-files.")
 
 
 ;;;; package.el
 (require 'package)
-(setq package-user-dir (expand-file-name "elpa/" dot-emacs-dir))
+(setopt package-user-dir (expand-file-name "elpa/" user-emacs-directory))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
 ;; Emacs.app launched from Finder/Dock inherits only a minimal system
@@ -74,23 +72,10 @@
 
 (package-initialize)
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(require 'use-package)
-
 ;; Keep GNU ELPA signing keys current as they rotate.  Once installed it
 ;; pulls fresh keys from the archive itself, so the bundled-Emacs keyring
 ;; above only has to be good enough to verify this one package.
 (use-package gnu-elpa-keyring-update :ensure t)
-
-
-;;;; macros
-(defmacro after (mode &rest body)
-  "`eval-after-load' MODE evaluate BODY."
-  (declare (indent defun))
-  `(eval-after-load ,mode
-     '(progn ,@body)))
 
 
 ;;;; editor settings from Prelude
@@ -109,42 +94,42 @@
 (setq-default tab-width 8)            ;; but maintain correct appearance
 
 ;; Newline at end of file
-(setq require-final-newline t)
+(setopt require-final-newline t)
 
 ;; delete the selection with a keypress
 (delete-selection-mode t)
 
 ;; store all backup and autosave files in the tmp dir
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
-;; autosave the undo-tree history
-(setq undo-tree-history-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq undo-tree-auto-save-history t)
+(setopt backup-directory-alist
+        `((".*" . ,temporary-file-directory)))
+(setopt auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
 
 ;; revert buffers automatically when underlying files are changed externally
 (global-auto-revert-mode t)
 
 ;; hippie expand is dabbrev expand on steroids
-(setq hippie-expand-try-functions-list '(try-expand-dabbrev
-                                         try-expand-dabbrev-all-buffers
-                                         try-expand-dabbrev-from-kill
-                                         try-complete-file-name-partially
-                                         try-complete-file-name
-                                         try-expand-all-abbrevs
-                                         try-expand-list
-                                         try-expand-line
-                                         try-complete-lisp-symbol-partially
-                                         try-complete-lisp-symbol))
+(setopt hippie-expand-try-functions-list '(try-expand-dabbrev
+                                           try-expand-dabbrev-all-buffers
+                                           try-expand-dabbrev-from-kill
+                                           try-complete-file-name-partially
+                                           try-complete-file-name
+                                           try-expand-all-abbrevs
+                                           try-expand-list
+                                           try-expand-line
+                                           try-complete-lisp-symbol-partially
+                                           try-complete-lisp-symbol))
 
 ;; smart tab behavior - indent or complete
-(setq tab-always-indent 'complete)
+(setopt tab-always-indent 'complete)
 
-;; enable y/n answers
-(fset 'yes-or-no-p 'y-or-n-p)
+;; y/n in place of yes/no everywhere (Emacs 28+).
+(setopt use-short-answers t)
+
+;; Show matching paren; if the partner is offscreen, show it in the
+;; echo area (Emacs 29+).  Replaces the old `mic-paren' package.
+(setopt show-paren-context-when-offscreen t)
+(show-paren-mode 1)
 
 
 ;;;; session persistence: desktop + save-place + savehist
@@ -156,47 +141,55 @@
 ;; still apply, and `auto-save-mode' handles crash recovery.
 (use-package desktop
   :init
-  (setq desktop-path             (list savefile-dir)
-        desktop-dirname          savefile-dir
-        desktop-save             t       ; save silently on exit
-        desktop-load-locked-desktop t    ; allow GUI + terminal Emacs to coexist
-        desktop-restore-eager    5       ; restore a few; lazy-load the rest
-        desktop-restore-frames   nil     ; skip frame layout (mixed GUI/tty)
-        desktop-files-not-to-save
-        (rx (or
-             ;; TRAMP/remote files and ange-ftp (Emacs defaults)
-             (seq bos "/" (1+ (not (any "/:"))) ":")
-             (seq "(ftp)" eos)
-             ;; large/log/archive files
-             (seq "." (or "log" "gz" "bz2" "xz" "zip") eos))))
+  (setopt desktop-path             (list savefile-dir)
+          desktop-dirname          savefile-dir
+          desktop-save             t       ; save silently on exit
+          desktop-load-locked-desktop t    ; allow GUI + terminal Emacs to coexist
+          desktop-restore-eager    5       ; restore a few; lazy-load the rest
+          desktop-restore-frames   nil     ; skip frame layout (mixed GUI/tty)
+          desktop-files-not-to-save
+          (rx (or
+               ;; TRAMP/remote files and ange-ftp (Emacs defaults)
+               (seq bos "/" (1+ (not (any "/:"))) ":")
+               (seq "(ftp)" eos)
+               ;; large/log/archive files
+               (seq "." (or "log" "gz" "bz2" "xz" "zip") eos))))
   :config
   (add-to-list 'desktop-modes-not-to-save 'dired-mode)
   (desktop-save-mode 1))
 
 (use-package saveplace
-  :init   (setq save-place-file (file-name-concat savefile-dir "saveplace"))
+  :init   (setopt save-place-file (file-name-concat savefile-dir "saveplace"))
   :config (save-place-mode 1))
 
 (use-package savehist
-  :init   (setq savehist-file (file-name-concat savefile-dir "savehist")
-                history-length 1000
-                savehist-save-minibuffer-history t
-                savehist-additional-variables '(search-ring regexp-search-ring))
+  :init   (setopt savehist-file (file-name-concat savefile-dir "savehist")
+                  history-length 1000
+                  savehist-save-minibuffer-history t
+                  savehist-additional-variables '(search-ring regexp-search-ring))
   :config (savehist-mode 1))
 
 
 ;;;; global key bindings
 
 ;; replace buffer-menu with ibuffer
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+(keymap-global-set "C-x C-b" #'ibuffer)
 
 ;; enable fullscreen toggling via Alt-Enter
-(when (and (eq system-type 'darwin) window-system)
-  (global-set-key (kbd "M-RET") 'toggle-frame-fullscreen))
+(when (and (eq system-type 'darwin) (display-graphic-p))
+  (keymap-global-set "M-RET" #'toggle-frame-fullscreen))
 
 
 ;;;; emacs lisp
+
+;; `elisp-flymake-byte-compile' spawns a clean sub-Emacs that knows
+;; nothing about installed packages, so symbols like `paredit-mode' or
+;; `vertico-mode' look undefined.  Hand it our `load-path' so it can
+;; resolve them.
+(setopt elisp-flymake-byte-compile-load-path (cons "./" load-path))
+
 (defun imenu-elisp-sections ()
+  "Add an Imenu \"Sections\" group keyed on `;;;;' headings."
   (setq imenu-prev-index-position-function nil)
   (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
 
@@ -216,10 +209,13 @@
 
 (add-hook 'emacs-lisp-mode-hook #'pr/elisp-insert-lexical-binding-cookie)
 
+;; Built-in flymake picks up `elisp-flymake-byte-compile' and
+;; `elisp-flymake-checkdoc' automatically.
+(add-hook 'emacs-lisp-mode-hook #'flymake-mode)
+
 ;; Prepend the lexical-binding cookie to `initial-scratch-message'.
-(when (stringp initial-scratch-message)
-  (setq initial-scratch-message
-        (concat ";;; -*- lexical-binding: t -*-\n\n" initial-scratch-message)))
+(setq initial-scratch-message
+      (concat ";;; -*- lexical-binding: t -*-\n\n" initial-scratch-message))
 
 
 ;;;; get $PATH from the shell
@@ -258,15 +254,13 @@
   :ensure t
   :commands (markdown-mode gfm-mode)
   :mode (("\\.md\\'" . gfm-mode))
-  :init (setq markdown-command "multimarkdown"))
+  :init (setopt markdown-command "multimarkdown"))
 
 
 ;;;; company
 (use-package company
   :ensure t
-  :config (progn
-            ;; Use company-mode in all buffers
-            (add-hook 'after-init-hook 'global-company-mode)))
+  :config (add-hook 'after-init-hook 'global-company-mode))
 
 
 ;;;; eglot — LSP client built into Emacs 29+.  Drives diagnostics via
@@ -282,113 +276,58 @@
 
 
 ;;;; go-mode
-(defun four-space-tabs-please! ()
-  "Yes, 4 spaces in tabs!"
-  (setq tab-width 4))
+(defun pr/go-mode-setup ()
+  "Per-buffer setup for `go-mode'."
+  (setq tab-width 4)
+  (company-mode))
 
 (use-package go-mode
   :ensure t
-  :init   (add-hook 'go-mode-hook
-                    (lambda ()
-                      (four-space-tabs-please!)
-                      (company-mode))))
+  :hook   (go-mode . pr/go-mode-setup))
 
 
-;;;; mic-paren
-(use-package mic-paren
+;;;; vertico — vertical completion UI (Emacs `completing-read').
+(use-package vertico
   :ensure t
-  :config (add-hook 'prog-mode-hook 'paren-activate))
+  :init   (vertico-mode 1)
+  :custom (vertico-cycle t))
 
 
-;;;; smex (making M-x not suck!)
-(use-package smex
+;;;; orderless — flexible, space-separated matching.
+(use-package orderless
   :ensure t
-  :bind   (("M-x"         . smex)
-           ("M-X"         . smex-major-mode-commands)
-           ("C-c C-c M-x" . execute-extended-command))
-  :config (setq smex-save-file (file-name-concat savefile-dir "smex-items")))
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 
-;;;; ido
-(use-package ido
-  :config (setq ido-case-fold t
-                ido-enable-prefix nil
-                ido-create-new-buffer 'always
-                ido-use-filename-at-point 'guess
-                ido-max-prospects 10
-                ido-save-directory-list-file (file-name-concat savefile-dir "ido.last")
-                ido-default-file-method 'selected-window
-                ido-auto-merge-work-directories-length -1
-                ido-ignore-buffers '("\\` ")))
-
-
-;;;; smarter fuzzy matching for ido
-(use-package flx-ido
+;;;; marginalia — rich annotations in the minibuffer.
+(use-package marginalia
   :ensure t
-  :init   (flx-ido-mode +1)
-  :config (progn
-            ;; disable ido faces to see flx highlights
-            (setq ido-use-faces nil)))
+  :init (marginalia-mode 1))
 
 
-;;;; ido-completing-read+ (formerly ido-ubiquitous)
-(use-package ido-completing-read+
+;;;; consult — power commands over completing-read.  `consult-ripgrep'
+;;;; needs `rg' on PATH (brew install ripgrep); the built-in
+;;;; `project-find-regexp' (C-x p g) covers the ripgrep-less case.
+(use-package consult
   :ensure t
-  :init   (progn
-            (ido-mode 1)
-            (ido-everywhere 1)
-            (ido-ubiquitous-mode 1)))
-
-
-;;;; flycheck
-(use-package flycheck
-  :ensure t
-  :config (progn
-            (setq flycheck-mode-line-lighter " fl")
-            (add-hook 'after-init-hook 'global-flycheck-mode)))
-
-
-;;;; git-grep
-(when (require 'vc-git nil t)
-  (defcustom git-grep-switches "--extended-regexp -I -n --no-color"
-    "Switches to pass to `git grep'."
-    :type 'string)
-
-  (defun git-grep-get-shell-command (case-sensitive)
-    (let ((root (vc-git-root default-directory)))
-      (when (not root)
-        (error "Directory %s is not part of a Git working tree" default-directory))
-      (list (read-shell-command "Run git-grep (like this): "
-                                (format "cd %s && git grep %s%s -e %s"
-                                        root
-                                        git-grep-switches
-                                        (if case-sensitive "" " --ignore-case")
-                                        (let ((thing (thing-at-point 'symbol)))
-                                          (or (and thing (progn
-                                                           (set-text-properties 0 (length thing) nil thing)
-                                                           (shell-quote-argument thing)))
-                                              "")))
-                                'git-grep-history))))
-
-  (defun git-grep (command-args)
-    (interactive (git-grep-get-shell-command t))
-    (let ((grep-use-null-device nil))
-      (grep command-args)))
-
-  (defun git-grep-i (command-args)
-    (interactive (git-grep-get-shell-command nil))
-    (let ((grep-use-null-device nil))
-      (grep command-args))))
+  :bind (("C-x b"   . consult-buffer)
+         ("C-c l"   . consult-line)
+         ("M-y"     . consult-yank-pop)
+         ("M-g g"   . consult-goto-line)
+         ("M-g i"   . consult-imenu)
+         ("C-c r"   . consult-ripgrep)))
 
 
 ;;;; ensure we have solarized-theme
-(use-package solarized-theme :ensure t :if window-system)
+(use-package solarized-theme :ensure t :if (display-graphic-p))
 
 
 ;;;; miscellaneous customizations
 
 ;; Theme and font settings
-(when window-system
+(when (display-graphic-p)
   (defun text-scale-default () (interactive) (text-scale-set 0))
   (bind-key "s-=" 'text-scale-increase)
   (bind-key "s--" 'text-scale-decrease)
@@ -396,7 +335,7 @@
   (load-theme 'tango-dark t)
 
   (add-to-list 'default-frame-alist
-               '(font . "JetBrainsMono Nerd Font Mono-15")))
+               '(font . "JetBrainsMono Nerd Font-15")))
 
 ;; ligature.el discovers what the active font's OpenType tables
 ;; advertise and composes those character sequences automatically.  The
@@ -435,10 +374,34 @@
 ;; below my source, not next to it.
 ;;
 ;; So this makes that not happen.
-(setq split-width-threshold 500)
+(setopt split-width-threshold 500)
 
 
-(setq custom-file "~/.emacs.d/custom.el")
+;;;; Emacs 30 niceties — additive quality-of-life
+
+;; Smooth pixel scrolling in GUI Emacs (Emacs 29+).
+(when (display-graphic-p)
+  (pixel-scroll-precision-mode 1))
+
+;; Chord-free repeat of common command sequences (Emacs 28+).
+(repeat-mode 1)
+
+;; Built-in in Emacs 30: show key hints after a prefix.
+(which-key-mode 1)
+
+;; Stop dired buffers from piling up (Emacs 28+).
+(setopt dired-kill-when-opening-new-dired-buffer t)
+
+;; Inline grey "ghost" completion previews in prog buffers (Emacs 30).
+(add-hook 'prog-mode-hook #'completion-preview-mode)
+
+;; Save visited buffers to disk on a timer (Emacs 26+).  These are real
+;; saves, not `#file#' auto-saves.
+(setopt auto-save-visited-interval 30)
+(auto-save-visited-mode 1)
+
+
+(setopt custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror)
 
 ;;; init.el ends here
