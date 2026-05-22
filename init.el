@@ -216,6 +216,18 @@
             (add-hook 'after-init-hook 'global-company-mode)))
 
 
+;;;; eglot — LSP client built into Emacs 29+.  Drives diagnostics via
+;;;; flymake, hover docs via eldoc, completion via completion-at-point
+;;;; (picked up automatically by `company-capf').
+;;;;
+;;;; For Go you need `gopls' on PATH:
+;;;;   brew install gopls
+;;;; or
+;;;;   go install golang.org/x/tools/gopls@latest
+(use-package eglot
+  :hook (go-mode . eglot-ensure))
+
+
 ;;;; go-mode
 (defun four-space-tabs-please! ()
   "Yes, 4 spaces in tabs!"
@@ -223,11 +235,10 @@
 
 (use-package go-mode
   :ensure t
-  :init   (progn
-            (add-hook 'go-mode-hook (lambda ()
-                                      (four-space-tabs-please!)
-                                      (set (make-local-variable 'company-backends) '(company-go))
-                                      (company-mode)))))
+  :init   (add-hook 'go-mode-hook
+                    (lambda ()
+                      (four-space-tabs-please!)
+                      (company-mode))))
 
 
 ;;;; mic-paren
