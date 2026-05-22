@@ -25,12 +25,50 @@
 (require 'package)
 (setq package-user-dir (expand-file-name "elpa/" dot-emacs-dir))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+;; Emacs.app launched from Finder/Dock inherits only a minimal system
+;; PATH, so Homebrew binaries (gpg, etc.) are invisible.  Prepend the
+;; usual bin dirs early so the gpg check below works before
+;; `exec-path-from-shell' runs.
+(when (eq system-type 'darwin)
+  (dolist (dir '("/opt/homebrew/bin" "/usr/local/bin"))
+    (when (file-directory-p dir)
+      (add-to-list 'exec-path dir)
+      (setenv "PATH" (concat dir ":" (or (getenv "PATH") ""))))))
+
+;; package.el shells out to gpg for signature verification.  Without it,
+;; both the keyring bootstrap below and every signed package install
+;; later will fail in confusing ways.  Halt early with a clear message.
+(unless (executable-find "gpg")
+  (error
+   (concat
+    "gpg not found on PATH.  GNU ELPA package signatures cannot be verified.\n"
+    "Install GnuPG and restart Emacs:\n"
+    "  macOS:         brew install gnupg\n"
+    "  Debian/Ubuntu: sudo apt install gnupg\n"
+    "  Fedora/RHEL:   sudo dnf install gnupg2\n"
+    "  Arch:          sudo pacman -S gnupg")))
+
+;; On a pristine checkout the ELPA gnupg/ keyring is empty, so signature
+;; verification of GNU ELPA packages fails.  Import the keyring that ships
+;; with Emacs before the first package fetch.
+(let ((keyring-dir (expand-file-name "gnupg" package-user-dir))
+      (bundled    (expand-file-name "package-keyring.gpg" data-directory)))
+  (when (and (not (file-directory-p keyring-dir))
+             (file-exists-p bundled))
+    (package-import-keyring bundled)))
+
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+
+;; Keep GNU ELPA signing keys current as they rotate.  Once installed it
+;; pulls fresh keys from the archive itself, so the bundled-Emacs keyring
+;; above only has to be good enough to verify this one package.
+(use-package gnu-elpa-keyring-update :ensure t)
 
 
 ;;;; macros
