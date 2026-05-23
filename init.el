@@ -335,18 +335,29 @@
   (load-theme 'tango-dark t)
 
   (add-to-list 'default-frame-alist
-               '(font . "JetBrainsMono Nerd Font-16:weight=thin")))
+               '(font . "JetBrainsMono Nerd Font-16:weight=thin"))
+
+  ;; `default-frame-alist' only configures the `default' face.  Modes
+  ;; like markdown-mode style code blocks, tables, and prose through
+  ;; `fixed-pitch' / `variable-pitch', which carry their own :family
+  ;; (typically "Monospace" / "Sans Serif").  Point them at the matching
+  ;; JetBrainsMono variants so those buffers match `default'.
+  (set-face-attribute 'fixed-pitch    nil
+                      :family "JetBrainsMono Nerd Font Mono"  :weight 'thin)
+  (set-face-attribute 'variable-pitch nil
+                      :family "JetBrainsMono Nerd Font Propo" :weight 'thin))
 
 ;; ligature.el discovers what the active font's OpenType tables
 ;; advertise and composes those character sequences automatically.  The
 ;; superset list below covers Fira Code, JetBrainsMono, Cascadia Code,
-;; etc.; the font picks which ones actually render.  Programming modes
-;; only, so markdown/text source stays unmolested.
+;; etc.; the font picks which ones actually render.  Enabled in
+;; programming modes and markdown/gfm so things like "->" compose
+;; everywhere they read as arrows.
 (use-package ligature
   :ensure t
   :config
   (ligature-set-ligatures
-   'prog-mode
+   '(prog-mode markdown-mode gfm-mode)
    '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
      ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
      "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
