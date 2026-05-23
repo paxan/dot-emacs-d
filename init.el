@@ -335,7 +335,7 @@
   (load-theme 'tango-dark t)
 
   (add-to-list 'default-frame-alist
-               '(font . "JetBrainsMono Nerd Font-15")))
+               '(font . "JetBrainsMono Nerd Font-16:weight=thin")))
 
 ;; ligature.el discovers what the active font's OpenType tables
 ;; advertise and composes those character sequences automatically.  The
