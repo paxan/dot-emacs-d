@@ -271,8 +271,20 @@
 ;;;;   brew install gopls
 ;;;; or
 ;;;;   go install golang.org/x/tools/gopls@latest
+;;;;
+;;;; For Nix you need `nixd' on PATH.
 (use-package eglot
-  :hook (go-mode . eglot-ensure))
+  :hook ((go-mode  . eglot-ensure)
+         (nix-mode . eglot-ensure))
+  :config
+  (add-to-list 'eglot-server-programs
+               '(nix-mode . ("nixd"))))
+
+
+;;;; nix-mode — Nix language editing
+(use-package nix-mode
+  :ensure t
+  :mode "\\.nix\\'")
 
 
 ;;;; go-mode
