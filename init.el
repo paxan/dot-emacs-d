@@ -274,17 +274,27 @@
 ;;;;
 ;;;; For Nix you need `nixd' on PATH.
 (use-package eglot
-  :hook ((go-mode  . eglot-ensure)
-         (nix-mode . eglot-ensure))
+  :hook ((go-mode       . eglot-ensure)
+         (nix-mode      . eglot-ensure)
+         (protobuf-mode . eglot-ensure))
   :config
   (add-to-list 'eglot-server-programs
-               '(nix-mode . ("nixd"))))
+               '(nix-mode . ("nixd")))
+  (add-to-list 'eglot-server-programs
+               '(protobuf-mode . ("buf" "beta" "lsp"))))
 
 
 ;;;; nix-mode — Nix language editing
 (use-package nix-mode
   :ensure t
   :mode "\\.nix\\'")
+
+
+;;;; protobuf-mode — Protocol Buffer editing
+;;;; LSP: buf-language-server ships with the `buf' CLI (buf beta lsp).
+(use-package protobuf-mode
+  :ensure t
+  :mode "\\.proto\\'")
 
 
 ;;;; go-mode
